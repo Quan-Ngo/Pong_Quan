@@ -1,7 +1,7 @@
 using UnityEngine;
 
 /// <summary>
-/// Handles ball collision responses for walls and paddles.
+/// Handles ball collision responses for walls, paddles, and goal guard walls.
 /// Attached to the same GameObject as BallController.
 /// Uses trigger colliders — the ball, walls, and paddles must all have Collider2D (isTrigger = true on ball).
 /// </summary>
@@ -26,10 +26,25 @@ public class BallCollisionHandler : MonoBehaviour
     {
         if (other.CompareTag(wallTag))
         {
+            // Check if this is a GoalGuard wall first.
+            GoalGuardWall guardWall = other.GetComponent<GoalGuardWall>();
+            if (guardWall != null)
+            {
+                // Treat as if the owner player hit the ball.
+                _ball.lastHitterIndex = guardWall.ownerPlayerIndex;
+            }
+
             HandleWallBounce();
         }
         else if (other.CompareTag(paddleTag))
         {
+            // Update last hitter based on which paddle was hit.
+            PaddleController paddle = other.GetComponent<PaddleController>();
+            if (paddle != null)
+            {
+                _ball.lastHitterIndex = paddle.playerIndex;
+            }
+
             HandlePaddleBounce(other);
         }
     }
