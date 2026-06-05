@@ -1,0 +1,112 @@
+{
+    "name": "PongInputActions",
+    "maps": [
+        {
+            "name": "Player1",
+            "id": "a1b2c3d4-1111-2222-3333-444455556666",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0001",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "WS",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0002",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "negative",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0003",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "positive",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0004",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                }
+            ]
+        },
+        {
+            "name": "Player2",
+            "id": "a1b2c3d4-1111-2222-3333-444455557777",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0005",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "Arrows",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0006",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": true,
+                    "isPartOfComposite": false,
+                    "modifiers": ""
+                },
+                {
+                    "name": "negative",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0007",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                },
+                {
+                    "name": "positive",
+                    "id": "a1b2c3d4-aaaa-bbbb-cccc-ddddeeee0008",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true,
+                    "modifiers": ""
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
