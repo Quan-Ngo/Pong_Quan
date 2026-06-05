@@ -69,10 +69,29 @@ public class PowerupSpawner : MonoBehaviour
         while (true)
         {
             float delay = Random.Range(gameSettings.powerupSpawnMinInterval, gameSettings.powerupSpawnMaxInterval);
-            yield return new WaitForSeconds(delay);
+            float elapsed = 0f;
+
+            while (elapsed < delay)
+            {
+                // Pause the countdown if a box is currently active on the field
+                if (HasActiveBox())
+                {
+                    yield return null;
+                    continue;
+                }
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
 
             SpawnBox();
         }
+    }
+
+    private bool HasActiveBox()
+    {
+        _activeBoxes.RemoveAll(box => box == null);
+        return _activeBoxes.Count > 0;
     }
 
     private void SpawnBox()

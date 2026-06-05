@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Powerup configuration in `GameSettingsSO`: spawn intervals, duration, multipliers.
 
 ### Changed
+- `PowerupSpawner.cs` — Pauses the spawn timer countdown when a powerup box is active on the field, resuming it only after collection/destruction.
 - `BallController.cs` — Added `lastHitterIndex` tracking, `onBallServed` event broadcast, and dynamic speed multiplier based on active ball powerups.
 - `BallCollisionHandler.cs` — Now updates `lastHitterIndex` on paddle hits and GoalGuard wall hits.
 - `PaddleController.cs` — Added `playerIndex` field, `SetSpeedMultiplier()` and `SetScaleMultiplier()` methods. Paddle is fully decoupled from powerup logic.
