@@ -21,15 +21,30 @@ public class BallController : MonoBehaviour
     [HideInInspector] public float currentSpeed;
 
     /// <summary>
-    /// Index of the player who last hit the ball (0 = Left, 1 = Right).
+    /// Index of the player who last hit the ball (0 = Left, 1 = Right, -1 = None).
     /// Updated by BallCollisionHandler on paddle and GoalGuard collisions.
     /// </summary>
-    [HideInInspector] public int lastHitterIndex;
+    private int _lastHitterIndex = -1;
+    public int lastHitterIndex 
+    {
+        get => _lastHitterIndex;
+        set
+        {
+            if (_lastHitterIndex != value)
+            {
+                _lastHitterIndex = value;
+                OnLastHitterChanged?.Invoke(_lastHitterIndex);
+            }
+        }
+    }
+
+    public event System.Action<int> OnLastHitterChanged;
 
     /// <summary>Serve direction set by the GameManager before serve (+1 = right, -1 = left).</summary>
     private int _serveDirection = 1;
 
     private Vector3 _startPosition;
+    private System.Collections.Generic.List<float> _speedMultipliers = new System.Collections.Generic.List<float>();
 
     private void Awake()
     {
@@ -57,44 +72,29 @@ public class BallController : MonoBehaviour
     }
 
     /// <summary>
-    /// Calculates a dynamic speed multiplier based on active ball powerups.
+    /// Calculates a dynamic speed multiplier based on active trigger zones.
     /// </summary>
     private float GetBallSpeedMultiplier()
     {
-        if (PowerupManager.Instance == null) return 1f;
-
         float multiplier = 1f;
 
-        // Check both players for ball-related powerups.
-        for (int playerIndex = 0; playerIndex < 2; playerIndex++)
+        // Apply multipliers from active trigger zones (e.g., SlowZone) and PowerupManager
+        foreach (float m in _speedMultipliers)
         {
-            // OpponentFastBall: ball moves faster when heading AWAY from the owner.
-            if (PowerupManager.Instance.HasActivePowerup(playerIndex, PowerupType.OpponentFastBall))
-            {
-                // Player 0 is on the left. Ball moving right (velocity.x > 0) = away from player 0.
-                // Player 1 is on the right. Ball moving left (velocity.x < 0) = away from player 1.
-                bool movingAwayFromOwner = (playerIndex == 0 && velocity.x > 0f)
-                                        || (playerIndex == 1 && velocity.x < 0f);
-                if (movingAwayFromOwner)
-                {
-                    multiplier *= gameSettings.fastBallOpponentMultiplier;
-                }
-            }
-
-            // FriendlySlowBall: ball slows when on the owner's half.
-            if (PowerupManager.Instance.HasActivePowerup(playerIndex, PowerupType.FriendlySlowBall))
-            {
-                // Player 0's half is X < 0, Player 1's half is X > 0.
-                bool onOwnersHalf = (playerIndex == 0 && transform.position.x < 0f)
-                                 || (playerIndex == 1 && transform.position.x > 0f);
-                if (onOwnersHalf)
-                {
-                    multiplier *= gameSettings.slowBallFriendlyMultiplier;
-                }
-            }
+            multiplier *= m;
         }
 
         return multiplier;
+    }
+
+    public void AddSpeedMultiplier(float multiplier)
+    {
+        _speedMultipliers.Add(multiplier);
+    }
+
+    public void RemoveSpeedMultiplier(float multiplier)
+    {
+        _speedMultipliers.Remove(multiplier);
     }
 
     /// <summary>
@@ -132,6 +132,7 @@ public class BallController : MonoBehaviour
         transform.position = _startPosition;
         velocity = Vector2.zero;
         currentSpeed = 0f;
-        lastHitterIndex = 0;
+        lastHitterIndex = -1;
+        _speedMultipliers.Clear();
     }
 }

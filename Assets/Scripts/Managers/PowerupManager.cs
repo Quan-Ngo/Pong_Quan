@@ -24,6 +24,12 @@ public class PowerupManager : MonoBehaviour
     [Tooltip("Goal guard wall objects for Player 1 (Right). Disabled by default.")]
     [SerializeField] private GameObject[] goalGuardWallsPlayer1;
 
+    [Header("Slow Zone")]
+    [Tooltip("Slow zone objects for Player 0 (Left). Disabled by default.")]
+    [SerializeField] private GameObject[] slowZonesPlayer0;
+    [Tooltip("Slow zone objects for Player 1 (Right). Disabled by default.")]
+    [SerializeField] private GameObject[] slowZonesPlayer1;
+
     [Header("Events — Listen")]
     [SerializeField] private PowerupCollectedEventChannelSO powerupCollectedEvent;
     [SerializeField] private VoidEventChannelSO onRoundReset;
@@ -49,12 +55,16 @@ public class PowerupManager : MonoBehaviour
         };
     }
 
+    private bool _isFastBallActiveOnBall = false;
+
     private void OnEnable()
     {
         if (powerupCollectedEvent != null)
             powerupCollectedEvent.OnEventRaised += OnPowerupCollected;
         if (onRoundReset != null)
             onRoundReset.OnEventRaised += ClearAllPowerups;
+        if (ball != null)
+            ball.OnLastHitterChanged += HandleLastHitterChanged;
     }
 
     private void OnDisable()
@@ -63,6 +73,8 @@ public class PowerupManager : MonoBehaviour
             powerupCollectedEvent.OnEventRaised -= OnPowerupCollected;
         if (onRoundReset != null)
             onRoundReset.OnEventRaised -= ClearAllPowerups;
+        if (ball != null)
+            ball.OnLastHitterChanged -= HandleLastHitterChanged;
     }
 
     // ─────────────────────── Public Queries ───────────────────────
@@ -122,11 +134,11 @@ public class PowerupManager : MonoBehaviour
                 break;
 
             case PowerupType.OpponentFastBall:
-                // Ball speed is checked dynamically in BallController.FixedUpdate via HasActivePowerup.
+                UpdateFastBallMultiplier();
                 break;
 
             case PowerupType.FriendlySlowBall:
-                // Ball speed is checked dynamically in BallController.FixedUpdate via HasActivePowerup.
+                SetSlowZoneActive(playerIndex, true);
                 break;
 
             case PowerupType.GoalGuard:
@@ -150,11 +162,11 @@ public class PowerupManager : MonoBehaviour
                 break;
 
             case PowerupType.OpponentFastBall:
-                // No revert needed — dynamic check stops naturally.
+                UpdateFastBallMultiplier();
                 break;
 
             case PowerupType.FriendlySlowBall:
-                // No revert needed — dynamic check stops naturally.
+                SetSlowZoneActive(playerIndex, false);
                 break;
 
             case PowerupType.GoalGuard:
@@ -172,6 +184,40 @@ public class PowerupManager : MonoBehaviour
         {
             if (wall != null)
                 wall.SetActive(active);
+        }
+    }
+
+    private void SetSlowZoneActive(int playerIndex, bool active)
+    {
+        GameObject[] zones = playerIndex == 0 ? slowZonesPlayer0 : slowZonesPlayer1;
+        if (zones == null) return;
+
+        foreach (GameObject zone in zones)
+        {
+            if (zone != null)
+                zone.SetActive(active);
+        }
+    }
+
+    private void HandleLastHitterChanged(int hitterIndex)
+    {
+        UpdateFastBallMultiplier();
+    }
+
+    private void UpdateFastBallMultiplier()
+    {
+        // If the last hitter has the OpponentFastBall powerup, they get the fast ball.
+        bool shouldBeFast = HasActivePowerup(ball.lastHitterIndex, PowerupType.OpponentFastBall);
+
+        if (shouldBeFast && !_isFastBallActiveOnBall)
+        {
+            ball.AddSpeedMultiplier(gameSettings.fastBallOpponentMultiplier);
+            _isFastBallActiveOnBall = true;
+        }
+        else if (!shouldBeFast && _isFastBallActiveOnBall)
+        {
+            ball.RemoveSpeedMultiplier(gameSettings.fastBallOpponentMultiplier);
+            _isFastBallActiveOnBall = false;
         }
     }
 
@@ -198,6 +244,12 @@ public class PowerupManager : MonoBehaviour
             }
 
             _activePowerups[playerIndex].Clear();
+        }
+
+        if (_isFastBallActiveOnBall)
+        {
+            ball.RemoveSpeedMultiplier(gameSettings.fastBallOpponentMultiplier);
+            _isFastBallActiveOnBall = false;
         }
     }
 }

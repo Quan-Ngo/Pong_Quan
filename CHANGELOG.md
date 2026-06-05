@@ -21,7 +21,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - `PowerupSpawner.cs` — Pauses the spawn timer countdown when a powerup box is active on the field, resuming it only after collection/destruction.
-- `BallController.cs` — Added `lastHitterIndex` tracking, `onBallServed` event broadcast, and dynamic speed multiplier based on active ball powerups.
+- `BallController.cs` — Added `lastHitterIndex` tracking, `onBallServed` event broadcast, and dynamic speed multiplier based on active ball powerups. Refactored `FriendlySlowBall` out of polling loop in favor of trigger zones. Renamed `_zoneMultipliers` to `_speedMultipliers` (along with Add/Remove helper methods) for clarity. Modified `lastHitterIndex` to be a property that invokes an `OnLastHitterChanged` event and removed polling logic for `OpponentFastBall`.
+- `PowerupManager.cs` — Changed `FriendlySlowBall` implementation to activate physical `SlowZone` areas on the field instead of polling. Added subscription to `OnLastHitterChanged` to event-drive the `OpponentFastBall` multiplier directly onto the ball.
 - `BallCollisionHandler.cs` — Now updates `lastHitterIndex` on paddle hits and GoalGuard wall hits.
 - `PaddleController.cs` — Added `playerIndex` field, `SetSpeedMultiplier()` and `SetScaleMultiplier()` methods. Paddle is fully decoupled from powerup logic.
 
