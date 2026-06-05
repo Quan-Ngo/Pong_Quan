@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
         scoreEvent.RaiseEvent(1, 0);
 
         // First serve goes to the right (towards Player 2) by default.
-        ball.SetServeDirection(1);
+        ball.SetServeDirection(Random.Range(-1, 1));
         StartCoroutine(ServeAfterDelay());
     }
 
