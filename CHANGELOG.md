@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 - `PowerupType.cs` — Enum defining the 5 powerup types.
 - `PowerupCollectedEventChannelSO.cs` — Event channel for powerup collection broadcasts.
 - Powerup configuration in `GameSettingsSO`: spawn intervals, duration, multipliers.
+- `PowerupDebugUtility.cs` — Editor-only debug utility allowing developers to trigger any of the 5 powerups using the number keys 1–5 in the Unity Editor (configured to target either Player 0 or Player 1).
+
 
 ### Changed
 - `PowerupSpawner.cs` — Pauses the spawn timer countdown when a powerup box is active on the field, resuming it only after collection/destruction.

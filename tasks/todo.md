@@ -1,29 +1,22 @@
-# Pong Verification and Playtesting TODO
+# Powerup Debug Utility Implementation Plan
 
-- [ ] Create assembly definitions for scripts and tests (`PongGame.asmdef` and `PongTests.asmdef`)
-- [ ] Implement PlayMode integration tests for core gameplay:
-  - [ ] Test ball boundary bouncing (top/bottom walls)
-  - [ ] Test paddle deflection angles (hitting top, center, bottom of paddle)
-  - [ ] Test speed increase per paddle hit
-  - [ ] Test scoring and serve direction
-  - [ ] Test victory condition (first to 7 wins)
-- [ ] Implement the Powerup System:
-  - [ ] Create `PowerupType` enum (including `GoalGuard`) and configuration settings in `GameSettingsSO.cs`
-  - [ ] Create `PowerupBox.cs` for middle-screen movement, boundary bouncing, and ball trigger detection
-  - [ ] Create `PowerupSpawner.cs` for random-interval box spawning between serves
-  - [ ] Update `BallController.cs` to track the last hitting player index and apply ball-related powerup modifiers
-  - [ ] Update `PaddleController.cs` to support dynamic scale and speed adjustments
-  - [ ] Create `GoalGuardController.cs` to enable/disable goal defense walls based on powerup state
-  - [ ] Create `PowerupManager.cs` to handle powerup duration timers, apply/revert state, and raise powerup changed events
-  - [ ] Update events to coordinate spawner spawning/destruction upon ball serve and goal scored
-- [ ] Implement PlayMode integration tests for Powerup System:
-  - [ ] Test spawner state (spawns after serve, stops/destroys on goal)
-  - [ ] Test box collision & collection (gives powerup to last paddle hitter)
-  - [ ] Test paddle length and speed powerup application/expiration
-  - [ ] Test ball directional speed powerup application/expiration
-  - [ ] Test ball half-screen slow powerup application/expiration
-  - [ ] Test goal guard walls activation and deactivation
-- [ ] Run PlayMode tests to verify all mechanics pass
-- [ ] Update documentation:
-  - [ ] Add entry to `CHANGELOG.md`
-  - [ ] Update architecture/design docs for the powerup system
+- [x] Implement `PowerupDebugUtility.cs` in `Assets/Scripts/Gameplay/`
+  - [x] Add serialization for `PowerupCollectedEventChannelSO` event channel
+  - [x] Add serialization for `targetPlayerIndex` (default to 0)
+  - [x] Wrap functionality with `#if UNITY_EDITOR` preprocessor directive
+  - [x] Implement `Update` method to listen for number keys 1-5 and raise the event channel for the target player
+  - [x] Add log output to verify key presses and powerup triggers in the Unity Console
+- [x] Add the debug utility component to the scene
+  - [x] Find the active scene/prefabs
+  - [x] Hook up the `OnPowerupCollected` event channel in the editor
+- [x] Verify functionality
+  - [x] Run in playmode
+  - [x] Verify that keys 1-5 trigger the respective powerups for Player 0 (and Player 1 when index is changed)
+- [x] Update documentation and CHANGELOG.md as per project rules
+
+## Verification Results
+- Verified that pressing keys 1-5 correctly triggers the powerups.
+- Verified in Play Mode that the PaddleLengthened powerup raises the scale of Player 0's paddle from `3.00` to `4.50`.
+- Verified that compiling the script works with the Unity Input System package (`Keyboard.current`) and doesn't trigger the `InvalidOperationException`.
+
+

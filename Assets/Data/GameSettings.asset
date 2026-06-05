@@ -19,3 +19,11 @@ MonoBehaviour:
   maxBounceAngle: 60
   paddleSpeed: 5
   serveDelay: 1
+  powerupSpawnMinInterval: 4
+  powerupSpawnMaxInterval: 8
+  powerupDuration: 12
+  powerupBoxSpeed: 2.5
+  paddleLengthMultiplier: 1.5
+  paddleSpeedMultiplier: 1.4
+  fastBallOpponentMultiplier: 1.5
+  slowBallFriendlyMultiplier: 0.6
