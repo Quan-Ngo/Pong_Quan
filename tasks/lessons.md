@@ -17,3 +17,8 @@
 - **Correction**: The user pointed out the paddle was still respawning despite the game being over, because the game over flag was being inadvertently cleared.
 - **Context**: When responding to a goal being scored, the paddle immediately set `_isGameOver = false` within its `ExplodeAndRespawnRoutine` coroutine. Because event channel execution order can be arbitrary (e.g., `GameManager` might raise the `gameOverEvent` before or after `PaddleController` has started its respawn routine), hardcoding local state resets inside an event response can override global state updates.
 - **Rule**: Never arbitrarily reset global state flags (like `_isGameOver`) inside specific event handlers (like taking damage or scoring) unless the intent is specifically to override. State resets should only occur during explicit state-change methods (e.g., `ResetPaddleState` or `StartNewGame`).
+
+## 4. Clear Variable Naming Over Shorthands
+- **Correction**: The user pointed out that `sr` was a vague and unclear variable name and requested clearer naming.
+- **Context**: The `sr` shorthand was used for `SpriteRenderer` references inside slow zone handling code.
+- **Rule**: Avoid cryptic or ambiguous abbreviations (such as `sr`, `mc`, `rb`) in favor of descriptive, self-documenting variable names (like `spriteRenderer`, `menuController`, `rigidbody`) to maintain readability and clean code standards.

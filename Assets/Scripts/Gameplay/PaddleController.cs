@@ -43,6 +43,7 @@ public class PaddleController : MonoBehaviour
 
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
+    private Tween _scaleTween;
 
     private void Awake()
     {
@@ -201,6 +202,9 @@ public class PaddleController : MonoBehaviour
 
         _isGameOver = false;
 
+        // Stop any running tweens
+        _scaleTween?.Kill();
+
         // Reset scale and position
         transform.localScale = _originalScale;
         Vector3 pos = transform.position;
@@ -231,8 +235,12 @@ public class PaddleController : MonoBehaviour
     /// </summary>
     public void SetScaleMultiplier(float multiplier)
     {
+        _scaleTween?.Kill();
+
         Vector3 newScale = _originalScale;
         newScale.y *= multiplier;
-        transform.localScale = newScale;
+
+        Ease easeType = multiplier > 1f ? Ease.OutBack : Ease.InQuad;
+        _scaleTween = transform.DOScale(newScale, 0.3f).SetEase(easeType);
     }
 }

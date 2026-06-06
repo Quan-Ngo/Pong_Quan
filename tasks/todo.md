@@ -1,3 +1,22 @@
+# Powerup Visual Feedback Features
+
+- [ ] Modify `PaddleController.cs` for Tweened Paddle Length
+  - [ ] Implement Y-scale multiplier transitions using DOTween (0.3s duration, OutBack/InQuad eases)
+- [ ] Create `PaddlePowerupVisuals.cs` Component
+  - [ ] Implement dynamically created/managed Speed Boost Particle System (electric blue-white arcs with trails & noise)
+  - [ ] Implement dynamically created/managed Fast Ball Particle System (fiery orange/red aura matching paddle shape)
+  - [ ] Expose `SetSpeedBoostVfxActive(bool active)` and `SetFastBallVfxActive(bool active)`
+- [ ] Modify `PowerupManager.cs` for Goal Guard, Slow Zone, and VFX Activations
+  - [ ] Cache Goal Guard default positions and Slow Zone default alphas on `Start()`
+  - [ ] Update `SetGoalGuardActive` to tween walls in/out using DOTween (0.5s duration, OutBack/InQuad eases)
+  - [ ] Update `SetSlowZoneActive` to fade Slow Zone sprite alpha in/out using DOTween (0.5s duration)
+  - [ ] Query and toggle `PaddlePowerupVisuals` for speed boost and fast ball effects
+  - [ ] Implement tween and VFX cleanup in `ClearAllPowerups()` and `OnDestroy()`
+- [ ] Verify functionality and correctness
+  - [ ] Verify compilation
+  - [ ] Run Play Mode tests / visual checks
+- [ ] Update CHANGELOG.md and related documentation
+
 # Color Generation Refactoring
 
 - [x] Extract HSV color generation into `GenerateSpeedScaledColor` helper method in `GameVisualEffectsManager.cs`

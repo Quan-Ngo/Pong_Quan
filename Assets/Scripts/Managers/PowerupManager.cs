@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 /// <summary>
 /// Central powerup state manager. Tracks active powerups per player,
@@ -39,6 +40,12 @@ public class PowerupManager : MonoBehaviour
     /// </summary>
     private Dictionary<int, Dictionary<PowerupType, Coroutine>> _activePowerups;
 
+    // Cache for visual tweens and default states
+    private Dictionary<GameObject, float> _slowZoneDefaultAlphas = new Dictionary<GameObject, float>();
+    private Dictionary<GameObject, Tween> _slowZoneTweens = new Dictionary<GameObject, Tween>();
+    private Dictionary<GameObject, Vector3> _goalGuardDefaultPositions = new Dictionary<GameObject, Vector3>();
+    private Dictionary<GameObject, Tween> _goalGuardTweens = new Dictionary<GameObject, Tween>();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -56,6 +63,48 @@ public class PowerupManager : MonoBehaviour
     }
 
     private bool _isFastBallActiveOnBall = false;
+
+    private void Start()
+    {
+        CacheGoalGuards(goalGuardWallsPlayer0);
+        CacheGoalGuards(goalGuardWallsPlayer1);
+        CacheSlowZones(slowZonesPlayer0);
+        CacheSlowZones(slowZonesPlayer1);
+    }
+
+    private void CacheGoalGuards(GameObject[] walls)
+    {
+        if (walls == null) return;
+        foreach (GameObject wall in walls)
+        {
+            if (wall != null)
+            {
+                _goalGuardDefaultPositions[wall] = wall.transform.localPosition;
+                wall.SetActive(false);
+            }
+        }
+    }
+
+    private void CacheSlowZones(GameObject[] zones)
+    {
+        if (zones == null) return;
+        foreach (GameObject zone in zones)
+        {
+            if (zone != null)
+            {
+                SpriteRenderer spriteRenderer = zone.GetComponentInChildren<SpriteRenderer>();
+                if (spriteRenderer != null)
+                {
+                    _slowZoneDefaultAlphas[zone] = spriteRenderer.color.a;
+                }
+                else
+                {
+                    _slowZoneDefaultAlphas[zone] = 1f;
+                }
+                zone.SetActive(false);
+            }
+        }
+    }
 
     private void OnEnable()
     {
@@ -122,6 +171,7 @@ public class PowerupManager : MonoBehaviour
     private void ApplyEffect(int playerIndex, PowerupType type)
     {
         PaddleController paddle = paddles[playerIndex];
+        PaddlePowerupVisuals visuals = paddle.GetComponent<PaddlePowerupVisuals>();
 
         switch (type)
         {
@@ -131,10 +181,12 @@ public class PowerupManager : MonoBehaviour
 
             case PowerupType.PaddleSpeedBoost:
                 paddle.SetSpeedMultiplier(gameSettings.paddleSpeedMultiplier);
+                if (visuals != null) visuals.SetSpeedBoostVfxActive(true);
                 break;
 
             case PowerupType.OpponentFastBall:
                 UpdateFastBallMultiplier();
+                if (visuals != null) visuals.SetFastBallVfxActive(true);
                 break;
 
             case PowerupType.FriendlySlowBall:
@@ -150,6 +202,7 @@ public class PowerupManager : MonoBehaviour
     private void RevertEffect(int playerIndex, PowerupType type)
     {
         PaddleController paddle = paddles[playerIndex];
+        PaddlePowerupVisuals visuals = paddle.GetComponent<PaddlePowerupVisuals>();
 
         switch (type)
         {
@@ -159,10 +212,12 @@ public class PowerupManager : MonoBehaviour
 
             case PowerupType.PaddleSpeedBoost:
                 paddle.SetSpeedMultiplier(1f);
+                if (visuals != null) visuals.SetSpeedBoostVfxActive(false);
                 break;
 
             case PowerupType.OpponentFastBall:
                 UpdateFastBallMultiplier();
+                if (visuals != null) visuals.SetFastBallVfxActive(false);
                 break;
 
             case PowerupType.FriendlySlowBall:
@@ -182,8 +237,38 @@ public class PowerupManager : MonoBehaviour
 
         foreach (GameObject wall in walls)
         {
-            if (wall != null)
-                wall.SetActive(active);
+            if (wall == null) continue;
+
+            if (_goalGuardTweens.TryGetValue(wall, out Tween activeTween))
+            {
+                activeTween?.Kill();
+                _goalGuardTweens.Remove(wall);
+            }
+
+            if (!_goalGuardDefaultPositions.TryGetValue(wall, out Vector3 defaultPos))
+            {
+                defaultPos = wall.transform.localPosition;
+            }
+
+            if (active)
+            {
+                wall.SetActive(true);
+                Vector3 offScreenPos = defaultPos;
+                offScreenPos.y = defaultPos.y >= 0f ? 7f : -7f;
+                wall.transform.localPosition = offScreenPos;
+
+                Tween tween = wall.transform.DOLocalMove(defaultPos, 0.5f).SetEase(Ease.OutBack);
+                _goalGuardTweens[wall] = tween;
+            }
+            else
+            {
+                Vector3 offScreenPos = defaultPos;
+                offScreenPos.y = defaultPos.y >= 0f ? 7f : -7f;
+
+                Tween tween = wall.transform.DOLocalMove(offScreenPos, 0.5f).SetEase(Ease.InQuad)
+                    .OnComplete(() => wall.SetActive(false));
+                _goalGuardTweens[wall] = tween;
+            }
         }
     }
 
@@ -194,8 +279,35 @@ public class PowerupManager : MonoBehaviour
 
         foreach (GameObject zone in zones)
         {
-            if (zone != null)
-                zone.SetActive(active);
+            if (zone == null) continue;
+
+            if (_slowZoneTweens.TryGetValue(zone, out Tween activeTween))
+            {
+                activeTween?.Kill();
+                _slowZoneTweens.Remove(zone);
+            }
+
+            SpriteRenderer spriteRenderer = zone.GetComponentInChildren<SpriteRenderer>();
+            if (spriteRenderer == null) continue;
+
+            float defaultAlpha = _slowZoneDefaultAlphas.ContainsKey(zone) ? _slowZoneDefaultAlphas[zone] : 1f;
+
+            if (active)
+            {
+                zone.SetActive(true);
+                Color col = spriteRenderer.color;
+                col.a = 0f;
+                spriteRenderer.color = col;
+
+                Tween tween = spriteRenderer.DOFade(defaultAlpha, 0.5f).SetEase(Ease.OutQuad);
+                _slowZoneTweens[zone] = tween;
+            }
+            else
+            {
+                Tween tween = spriteRenderer.DOFade(0f, 0.5f).SetEase(Ease.InQuad)
+                    .OnComplete(() => zone.SetActive(false));
+                _slowZoneTweens[zone] = tween;
+            }
         }
     }
 
@@ -251,5 +363,64 @@ public class PowerupManager : MonoBehaviour
             ball.RemoveSpeedMultiplier(gameSettings.fastBallOpponentMultiplier);
             _isFastBallActiveOnBall = false;
         }
+
+        foreach (var kvp in _goalGuardTweens) { kvp.Value?.Kill(); }
+        _goalGuardTweens.Clear();
+        ResetAllGoalGuards();
+
+        foreach (var kvp in _slowZoneTweens) { kvp.Value?.Kill(); }
+        _slowZoneTweens.Clear();
+        ResetAllSlowZones();
+    }
+
+    private void ResetAllGoalGuards()
+    {
+        ResetGoalGuardPositions(goalGuardWallsPlayer0);
+        ResetGoalGuardPositions(goalGuardWallsPlayer1);
+    }
+
+    private void ResetGoalGuardPositions(GameObject[] walls)
+    {
+        if (walls == null) return;
+        foreach (GameObject wall in walls)
+        {
+            if (wall != null)
+            {
+                if (_goalGuardDefaultPositions.TryGetValue(wall, out Vector3 defaultPos))
+                    wall.transform.localPosition = defaultPos;
+                wall.SetActive(false);
+            }
+        }
+    }
+
+    private void ResetAllSlowZones()
+    {
+        ResetSlowZoneAlphas(slowZonesPlayer0);
+        ResetSlowZoneAlphas(slowZonesPlayer1);
+    }
+
+    private void ResetSlowZoneAlphas(GameObject[] zones)
+    {
+        if (zones == null) return;
+        foreach (GameObject zone in zones)
+        {
+            if (zone != null)
+            {
+                var sr = zone.GetComponentInChildren<SpriteRenderer>();
+                if (sr != null && _slowZoneDefaultAlphas.TryGetValue(zone, out float defaultAlpha))
+                {
+                    Color col = sr.color;
+                    col.a = defaultAlpha;
+                    sr.color = col;
+                }
+                zone.SetActive(false);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var tween in _goalGuardTweens.Values) tween?.Kill();
+        foreach (var tween in _slowZoneTweens.Values) tween?.Kill();
     }
 }
