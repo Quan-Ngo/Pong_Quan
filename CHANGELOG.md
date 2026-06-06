@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [0.3.1] - 2026-06-06
 
+### Added
+- **Goal Visual Juice**:
+  - Added strong screenshake, paddle explosion particles, and confetti effects when a goal is scored.
+  - Paused the serve timer until the losing paddle completely scales back into existence.
+  - Implemented decoupled, event-driven paddle respawn logic using a new `PaddleRespawnedEvent` Event Channel.
+  - Added a C# Editor Utility script (`GoalJuiceSetupUtility`) to programmatically build perfectly styled square-particle prefabs and bind them to scene dependencies.
+
 ### Changed
 - **Visual Effects Color Extraction**: Extracted speed-scaled HSV color generation into a reusable `GenerateSpeedScaledColor` helper method inside `GameVisualEffectsManager.cs` to eliminate duplicate color generation logic.
 - **Visual Effects Saturation Scaling**: Refactored background flash and shockwave colors in `GameVisualEffectsManager.cs` to scale their saturation (S) with ball speed using the HSV color model, while maintaining a constant 90% brightness (V = 0.9f) by default to keep a vibrant, consistent aesthetic.

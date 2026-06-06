@@ -9,9 +9,11 @@ public class GameVisualEffectsManager : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private BallCollisionEventChannelSO ballCollisionEventChannel;
+    [SerializeField] private GoalScoredEventChannelSO goalScoredEventChannel;
     [SerializeField] private GameSettingsSO gameSettings;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private SpriteRenderer bgRenderer;
+    [SerializeField] private PaddleController[] paddles; // Index 0 = Left, 1 = Right
 
     [Header("Camera Shake Settings")]
     [SerializeField] private float baseShakeDuration = 0.2f;
@@ -19,6 +21,11 @@ public class GameVisualEffectsManager : MonoBehaviour
     [SerializeField] private float baseRollStrength = 3f;
     [SerializeField] private int shakeVibrato = 10;
     [SerializeField] private float shakeRandomness = 90f;
+
+    [Header("Goal Shake Settings")]
+    [SerializeField] private float goalShakeDuration = 0.8f;
+    [SerializeField] private float goalShakeStrength = 0.45f;
+    [SerializeField] private float goalRollStrength = 6f;
 
     [Header("Background Flash Settings")]
     [SerializeField] private float flashDuration = 0.3f;
@@ -28,6 +35,10 @@ public class GameVisualEffectsManager : MonoBehaviour
     [SerializeField] private GameObject shockwavePrefab;
     [SerializeField] private float baseShockwaveDuration = 0.3f;
     [SerializeField] private float baseShockwaveEndScale = 2.5f;
+
+    [Header("Goal VFX Settings")]
+    [SerializeField] private GameObject paddleExplosionPrefab;
+    [SerializeField] private GameObject confettiPrefab;
 
     [Header("Color Saturation Settings")]
     [SerializeField] private float initialSaturationValue = 0.2f;
@@ -53,6 +64,10 @@ public class GameVisualEffectsManager : MonoBehaviour
         {
             ballCollisionEventChannel.OnEventRaised += HandleBallCollision;
         }
+        if (goalScoredEventChannel != null)
+        {
+            goalScoredEventChannel.OnEventRaised += HandleGoalScored;
+        }
     }
 
     private void OnDisable()
@@ -60,6 +75,10 @@ public class GameVisualEffectsManager : MonoBehaviour
         if (ballCollisionEventChannel != null)
         {
             ballCollisionEventChannel.OnEventRaised -= HandleBallCollision;
+        }
+        if (goalScoredEventChannel != null)
+        {
+            goalScoredEventChannel.OnEventRaised -= HandleGoalScored;
         }
         
         _cameraTween?.Kill();
@@ -92,14 +111,44 @@ public class GameVisualEffectsManager : MonoBehaviour
         float posStrength = baseShakeStrength * (1f + normalizedSpeed);
         float rollStrength = baseRollStrength * (1f + normalizedSpeed);
 
+        ApplyCameraShake(baseShakeDuration, posStrength, rollStrength);
+    }
+
+    private void HandleGoalScored(int losingPlayerIndex, Vector3 ballPosition)
+    {
+        // 1. Strong Goal Screenshake
+        if (mainCamera != null)
+        {
+            ApplyCameraShake(goalShakeDuration, goalShakeStrength, goalRollStrength);
+        }
+
+        // 2. Paddle Explosion
+        if (paddleExplosionPrefab != null && paddles != null && losingPlayerIndex >= 0 && losingPlayerIndex < paddles.Length)
+        {
+            PaddleController losingPaddle = paddles[losingPlayerIndex];
+            if (losingPaddle != null)
+            {
+                Instantiate(paddleExplosionPrefab, losingPaddle.transform.position, Quaternion.identity);
+            }
+        }
+
+        // 3. Goal Confetti
+        if (confettiPrefab != null)
+        {
+            Instantiate(confettiPrefab, ballPosition, Quaternion.identity);
+        }
+    }
+
+    private void ApplyCameraShake(float duration, float posStrength, float rollStrength)
+    {
         // Kill active tween and reset to starting position to prevent drifting
         _cameraTween?.Kill();
         mainCamera.transform.localPosition = _cameraStartPos;
         mainCamera.transform.localRotation = _cameraStartRot;
 
         Sequence shakeSequence = DOTween.Sequence();
-        shakeSequence.Join(mainCamera.transform.DOShakePosition(baseShakeDuration, posStrength, shakeVibrato, shakeRandomness, fadeOut: true));
-        shakeSequence.Join(mainCamera.transform.DOShakeRotation(baseShakeDuration, new Vector3(0, 0, rollStrength), shakeVibrato, shakeRandomness, fadeOut: true));
+        shakeSequence.Join(mainCamera.transform.DOShakePosition(duration, posStrength, shakeVibrato, shakeRandomness, fadeOut: true));
+        shakeSequence.Join(mainCamera.transform.DOShakeRotation(duration, new Vector3(0, 0, rollStrength), shakeVibrato, shakeRandomness, fadeOut: true));
         
         _cameraTween = shakeSequence;
     }

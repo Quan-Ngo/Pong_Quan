@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Event Channels — Listen")]
     [SerializeField] private GoalScoredEventChannelSO goalScoredEvent;
+    [SerializeField] private VoidEventChannelSO paddleRespawnedEvent;
 
     [Header("Event Channels — Broadcast")]
     [SerializeField] private ScoreEventChannelSO scoreEvent;
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
             goalScoredEvent.OnEventRaised += OnGoalScored;
         if (gameOverEvent != null)
             gameOverEvent.OnEventRaised += OnGameOver;
+        if (paddleRespawnedEvent != null)
+            paddleRespawnedEvent.OnEventRaised += OnPaddleRespawned;
     }
 
     private void OnDisable()
@@ -38,6 +41,8 @@ public class GameManager : MonoBehaviour
             goalScoredEvent.OnEventRaised -= OnGoalScored;
         if (gameOverEvent != null)
             gameOverEvent.OnEventRaised -= OnGameOver;
+        if (paddleRespawnedEvent != null)
+            paddleRespawnedEvent.OnEventRaised -= OnPaddleRespawned;
     }
 
     private void Start()
@@ -62,7 +67,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ServeAfterDelay());
     }
 
-    private void OnGoalScored(int losingPlayerIndex)
+    private void OnGoalScored(int losingPlayerIndex, Vector3 ballPosition)
     {
         if (_gameOver) return;
 
@@ -87,7 +92,17 @@ public class GameManager : MonoBehaviour
         // Player 0 is on the left (-1), Player 1 is on the right (+1).
         int serveDirection = (losingPlayerIndex == 0) ? -1 : 1;
         ball.SetServeDirection(serveDirection);
-        StartCoroutine(ServeAfterDelay());
+        
+        // Note: Serve is now deferred until the paddle respawns.
+        // OnPaddleRespawned will trigger the serve timer.
+    }
+
+    private void OnPaddleRespawned()
+    {
+        if (!_gameOver)
+        {
+            StartCoroutine(ServeAfterDelay());
+        }
     }
 
     private IEnumerator ServeAfterDelay()

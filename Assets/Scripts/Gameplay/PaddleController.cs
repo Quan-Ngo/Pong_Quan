@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
+using System.Collections;
 
 /// <summary>
 /// Controls a paddle's vertical movement using the new Input System.
@@ -19,6 +21,14 @@ public class PaddleController : MonoBehaviour
     [Header("Input")]
     [SerializeField] private InputActionReference moveInput;
 
+    [Header("Events")]
+    [SerializeField] private GoalScoredEventChannelSO goalScoredEvent;
+    [SerializeField] private VoidEventChannelSO paddleRespawnedEvent;
+
+    [Header("Respawn")]
+    [SerializeField] private float respawnDelay = 1.0f;
+    [SerializeField] private float respawnDuration = 0.5f;
+
     [Header("Bounds")]
     [Tooltip("Maximum Y position the paddle center can reach.")]
     [SerializeField] private float upperBound = 4f;
@@ -29,9 +39,14 @@ public class PaddleController : MonoBehaviour
     private float _speedMultiplier = 1f;
     private Vector3 _originalScale;
 
+    private SpriteRenderer _spriteRenderer;
+    private BoxCollider2D _boxCollider;
+
     private void Awake()
     {
         _originalScale = transform.localScale;
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _boxCollider = GetComponent<BoxCollider2D>();
     }
 
     private void OnEnable()
@@ -40,6 +55,10 @@ public class PaddleController : MonoBehaviour
         {
             moveInput.action.Enable();
         }
+        if (goalScoredEvent != null)
+        {
+            goalScoredEvent.OnEventRaised += OnGoalScored;
+        }
     }
 
     private void OnDisable()
@@ -47,6 +66,71 @@ public class PaddleController : MonoBehaviour
         if (moveInput != null && moveInput.action != null)
         {
             moveInput.action.Disable();
+        }
+        if (goalScoredEvent != null)
+        {
+            goalScoredEvent.OnEventRaised -= OnGoalScored;
+        }
+    }
+
+    private void OnGoalScored(int losingPlayerIndex, Vector3 ballPosition)
+    {
+        if (losingPlayerIndex == playerIndex)
+        {
+            StartCoroutine(ExplodeAndRespawnRoutine());
+        }
+    }
+
+    private IEnumerator ExplodeAndRespawnRoutine()
+    {
+        // 1. Disable controls
+        enabled = false;
+        if (moveInput != null && moveInput.action != null)
+        {
+            moveInput.action.Disable();
+        }
+        _moveDirection = 0f;
+
+        // 2. Hide paddle and disable collision
+        if (_spriteRenderer != null) _spriteRenderer.enabled = false;
+        if (_boxCollider != null) _boxCollider.enabled = false;
+
+        // 3. Wait for delay
+        yield return new WaitForSeconds(respawnDelay);
+
+        // 4. Reset position Y to 0, start scale from 0
+        Vector3 pos = transform.position;
+        pos.y = 0f;
+        transform.position = pos;
+        
+        transform.localScale = Vector3.zero;
+        if (_spriteRenderer != null) _spriteRenderer.enabled = true;
+
+        // 5. Scale tween in
+        // Determine target scale based on original scale and any powerup multipliers
+        Vector3 targetScale = _originalScale;
+        targetScale.y *= _speedMultiplier; // Wait, actually powerups set the transform scale directly via SetScaleMultiplier, but it's simpler to just tween to the target Y scale.
+        // Wait, to be safe, SetScaleMultiplier will be called during reset, so the paddle will already have the correct multiplier.
+        // However, we just tween to `_originalScale`. If a powerup is active, it changes Y. But during RoundReset, powerups are cleared.
+        // Let's tween to _originalScale directly.
+        bool tweenComplete = false;
+        transform.DOScale(_originalScale, respawnDuration)
+            .SetEase(Ease.OutBack)
+            .OnComplete(() => tweenComplete = true);
+
+        yield return new WaitUntil(() => tweenComplete);
+
+        // 6. Restore physics, controls, and raise event
+        if (_boxCollider != null) _boxCollider.enabled = true;
+        enabled = true;
+        if (moveInput != null && moveInput.action != null)
+        {
+            moveInput.action.Enable();
+        }
+
+        if (paddleRespawnedEvent != null)
+        {
+            paddleRespawnedEvent.RaiseEvent();
         }
     }
 

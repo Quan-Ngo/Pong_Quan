@@ -20,7 +20,7 @@ public class GoalZone : MonoBehaviour
     {
         if (other.CompareTag(ballTag))
         {
-            goalScoredEvent.RaiseEvent(losingPlayerIndex);
+            goalScoredEvent.RaiseEvent(losingPlayerIndex, other.transform.position);
         }
     }
 }

@@ -9,16 +9,17 @@ using UnityEngine;
 public class GoalScoredEventChannelSO : ScriptableObject
 {
     /// <summary>
-    /// Subscribe to react when a goal is scored. Parameter: losingPlayerIndex.
+    /// Subscribe to react when a goal is scored. Parameter: losingPlayerIndex, ballPosition.
     /// </summary>
-    public event Action<int> OnEventRaised;
+    public event Action<int, Vector3> OnEventRaised;
 
     /// <summary>
     /// Broadcast that a goal was scored.
     /// </summary>
     /// <param name="losingPlayerIndex">Index of the player who failed to block (0 or 1).</param>
-    public void RaiseEvent(int losingPlayerIndex)
+    /// <param name="ballPosition">The world position of the ball when the goal was scored.</param>
+    public void RaiseEvent(int losingPlayerIndex, Vector3 ballPosition)
     {
-        OnEventRaised?.Invoke(losingPlayerIndex);
+        OnEventRaised?.Invoke(losingPlayerIndex, ballPosition);
     }
 }

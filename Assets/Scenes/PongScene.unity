@@ -716,19 +716,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameVisualEffectsManager
   ballCollisionEventChannel: {fileID: 11400000, guid: 388ae577df2c2714cbe4bba170e42066, type: 2}
+  goalScoredEventChannel: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
   gameSettings: {fileID: 11400000, guid: fb0066d67dc5ecb41aa026fcf65cae60, type: 2}
   mainCamera: {fileID: 803778684}
   bgRenderer: {fileID: 1271285351}
+  paddles:
+  - {fileID: 380080891}
+  - {fileID: 1271392918}
   baseShakeDuration: 0.2
   baseShakeStrength: 0.15
   baseRollStrength: 3
   shakeVibrato: 10
   shakeRandomness: 90
+  goalShakeDuration: 0.8
+  goalShakeStrength: 0.45
+  goalRollStrength: 6
   flashDuration: 0.5
   backGroundFlashBrightness: 0.3
   shockwavePrefab: {fileID: 3873277466059410536, guid: d1759eb057508754082201e90310ddd6, type: 3}
   baseShockwaveDuration: 0.5
   baseShockwaveEndScale: 1
+  paddleExplosionPrefab: {fileID: 2102490316310076982, guid: d36c92ec56577fe4bad64abb01911a53, type: 3}
+  confettiPrefab: {fileID: 5815275082939199320, guid: 99b8d8be1d429014987375cf33359f20, type: 3}
   initialSaturationValue: 0.3
   speedScaleFactor: 1.6
 --- !u!4 &214896794
@@ -780,6 +789,10 @@ MonoBehaviour:
   gameSettings: {fileID: 11400000, guid: fb0066d67dc5ecb41aa026fcf65cae60, type: 2}
   playerIndex: 0
   moveInput: {fileID: 1257562677}
+  goalScoredEvent: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
+  paddleRespawnedEvent: {fileID: 11400000, guid: 062027b83109dfc4a9e792578bba2ca4, type: 2}
+  respawnDelay: 1
+  respawnDuration: 0.5
   upperBound: 4
   lowerBound: -4
 --- !u!61 &380080892
@@ -2629,6 +2642,10 @@ MonoBehaviour:
   gameSettings: {fileID: 11400000, guid: fb0066d67dc5ecb41aa026fcf65cae60, type: 2}
   playerIndex: 1
   moveInput: {fileID: 1996054055}
+  goalScoredEvent: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
+  paddleRespawnedEvent: {fileID: 11400000, guid: 062027b83109dfc4a9e792578bba2ca4, type: 2}
+  respawnDelay: 1
+  respawnDuration: 0.5
   upperBound: 4
   lowerBound: -4
 --- !u!61 &1271392919
@@ -3257,6 +3274,7 @@ MonoBehaviour:
   gameSettings: {fileID: 11400000, guid: fb0066d67dc5ecb41aa026fcf65cae60, type: 2}
   ball: {fileID: 1672213327}
   goalScoredEvent: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
+  paddleRespawnedEvent: {fileID: 11400000, guid: 062027b83109dfc4a9e792578bba2ca4, type: 2}
   scoreEvent: {fileID: 11400000, guid: 5dd27a1be2fa42a4c842114fde68379c, type: 2}
   roundResetEvent: {fileID: 11400000, guid: 90d8ceaf16c58154e870fe60c0e88508, type: 2}
   gameOverEvent: {fileID: 11400000, guid: 15eedf25d2bc69244a37c5db383aa315, type: 2}
