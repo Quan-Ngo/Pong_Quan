@@ -15,6 +15,9 @@ public class BallCollisionHandler : MonoBehaviour
     [SerializeField] private string wallTag = "Wall";
     [SerializeField] private string paddleTag = "Paddle";
 
+    [Header("Events")]
+    [SerializeField] private BallCollisionEventChannelSO onBallCollision;
+
     private BallController _ball;
 
     private void Awake()
@@ -35,6 +38,7 @@ public class BallCollisionHandler : MonoBehaviour
             }
 
             HandleWallBounce();
+            RaiseCollisionEvent(other);
         }
         else if (other.CompareTag(paddleTag))
         {
@@ -46,6 +50,16 @@ public class BallCollisionHandler : MonoBehaviour
             }
 
             HandlePaddleBounce(other);
+            RaiseCollisionEvent(other);
+        }
+    }
+
+    private void RaiseCollisionEvent(Collider2D other)
+    {
+        if (onBallCollision != null)
+        {
+            Vector3 impactPoint = other.ClosestPoint(transform.position);
+            onBallCollision.RaiseEvent(impactPoint, _ball.currentSpeed, other.tag);
         }
     }
 

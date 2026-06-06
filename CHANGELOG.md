@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-06-06
+
+### Added
+- **Vector Shockwave Ring Effect**: Spawns a clean expanding vector ring at the exact impact point of any ball collision.
+  - Generated high-quality anti-aliased $256 \times 256$ vector ring texture (`Ring.png`) and imported as a Sprite.
+  - Created `ShockwaveRing.cs` to handle the scaling-up and fading-out animation cycles of the ring, with auto-destruction on completion.
+  - Integrated `ShockwaveRing` prefab spawning in `GameVisualEffectsManager.cs`, scaling final size with the ball speed and assigning randomized vibrant colors.
+  - Created, saved, and linked the `ShockwavePrefab` asset to the `VisualEffectsManager` scene object.
+
+### Removed
+- **Particle System Explosions**: Removed the old particle system prefab reference and spawning code from `GameVisualEffectsManager.cs`, fully replacing it with the clean vector shockwave ring effect.
+
+### Fixed
+- **Shockwave Typing & Binding**: Resolved C# compilation error `CS0029` by changing `shockwavePrefab` instantiation logic to return `GameObject` and retrieving the `ShockwaveRing` component. Re-bound the correct `ShockwavePrefab.prefab` asset reference to the `VisualEffectsManager` script component in `PongScene.unity` using a C# editor script.
+
 ## [0.2.0] - 2026-06-05
 
 ### Added
@@ -19,6 +34,12 @@ All notable changes to this project will be documented in this file.
 - `PowerupCollectedEventChannelSO.cs` — Event channel for powerup collection broadcasts.
 - Powerup configuration in `GameSettingsSO`: spawn intervals, duration, multipliers.
 - `PowerupDebugUtility.cs` — Editor-only debug utility allowing developers to trigger any of the 5 powerups using the number keys 1–5 in the Unity Editor (configured to target either Player 0 or Player 1).
+- **Visual Feedback System**:
+  - Speed-scaled **Camera Shake** (position and roll) upon ball collisions using DOTween.
+  - Speed-scaled, random vibrant color **Background Flash** using DOTween.
+  - **Particle Explosions** at the exact contact point of ball collisions.
+- `BallCollisionEventChannelSO.cs` — Event channel decoupling visual feedback from physics logic.
+- `GameVisualEffectsManager.cs` — Centralized manager handling all visual feedback events.
 
 ### Fixed
 - Re-added the missing `EventSystem` to `PongScene`, fixing an issue where the game over Restart button was unclickable.
