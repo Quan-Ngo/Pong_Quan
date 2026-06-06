@@ -1,3 +1,15 @@
+# Powerup Box Tween & Configurable Side Feature
+
+- [ ] Modify `GameSettingsSO.cs` to add configurable side length
+  - [ ] Add `public float powerupBoxSide = 5f;` under Powerups spawning section
+- [ ] Modify `PowerupBox.cs` to use `gameSettings.powerupBoxSide`
+  - [ ] Calculate `_targetScale` in `Awake` using the configured side length
+  - [ ] Update `Start` to scale from 0 to `_targetScale` using DOTween
+- [ ] Verify functionality and correctness
+  - [ ] Verify compilation
+  - [ ] Run test to verify the scale matches the settings
+- [ ] Update CHANGELOG.md and related documentation
+
 # GameOver Panel WinnerText Hue Cycle Feature
 
 - [x] Modify `GameOverPanel.cs` for WinnerText Hue Cycle Tween
