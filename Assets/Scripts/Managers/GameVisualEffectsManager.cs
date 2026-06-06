@@ -53,7 +53,9 @@ public class GameVisualEffectsManager : MonoBehaviour
     {
         if (mainCamera != null)
         {
-            _cameraStartPos = mainCamera.transform.localPosition;
+            // Always set the base position to the gameplay center (0, 0, Z)
+            // so that shakes reset the camera to the arena, not the Title Screen.
+            _cameraStartPos = new Vector3(0f, 0f, mainCamera.transform.localPosition.z);
             _cameraStartRot = mainCamera.transform.localRotation;
         }
     }

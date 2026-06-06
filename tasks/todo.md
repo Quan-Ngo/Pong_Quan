@@ -38,6 +38,20 @@
   - [x] Verify shockwave vector ring spawns and animates (scales and fades) correctly
 - [x] Update CHANGELOG.md and project documentation
 
+# Title Screen UI & Camera Pan Feature
+
+- [x] Update `TitleScreenManager.cs` to refer to `ScoreDisplay` as a standard `Transform`
+  - [x] Change `gameplayUI` field from `RectTransform` to `Transform`
+  - [x] Adjust initialization to offset `gameplayUI.localPosition` instead of `anchoredPosition`
+  - [x] Adjust tweening to use `DOLocalMoveY` to target `0f`
+- [x] Connect Scene references in `PongScene`
+  - [x] Verify that `TitleScreenManager` on `TitleScreenUI` points to the `ScoreDisplay` transform
+- [x] Verify Play Mode behavior
+  - [x] Run the scene in Play Mode to verify camera pans from Y = -15 to Y = 0 and score display tweens from offscreen to Y = 0 local position
+  - [x] Verify gameplay starts and paddles unlock after the pan completes
+- [x] Update CHANGELOG.md and other documentation
+
+
 ## Review Section
 
 ### Changes Implemented:
@@ -45,8 +59,14 @@
 2. **Scene Binding Fix**: Wrote an editor script to locate `ShockwavePrefab.prefab` in project assets, assign it to the `shockwavePrefab` GameObject property of the `GameVisualEffectsManager` in the scene, and successfully saved `PongScene.unity`.
 3. **Clean Visuals & Optimization**: Transitioned the visual feedback from generic particle explosions to the custom clean vector ring shockwaves. Tweens scale/fade and automatically garbage-collect the shockwave objects.
 4. **Speed-Clamped Feedback**: Camera shake (positional offset + Z-axis roll) and background color flash brightness scale dynamically based on the incoming ball collision velocity.
+5. **Title Screen & Camera Pan UI**:
+   - Implemented `TitleScreenManager.cs` to manage the initial screen layout (Title, Subtitle, Play button) and start game transitions.
+   - Initialized the Camera position to Y = -15 and offset the ScoreDisplay (`gameplayUI` Transform) to local position Y = 300 to slide it out of view.
+   - Tweens the Camera position back to Y = 0 and ScoreDisplay to local Y = 0 over 1.5 seconds when the play button is clicked.
+   - Disables paddles, timers, and game logic initially; registers paddle controllers to subscribe to `StartGameEventChannel` to unlock controls only after the tween pan completes.
 
 ### Correctness Verification:
 - Compilation completed without errors.
 - Assigned prefab verified via C# reflection script query to be non-null and correctly bound to `ShockwavePrefab (UnityEngine.GameObject)`.
+- Play Mode test script verified camera pan transitions, score display local positioning, canvas deactivation, and paddle control unlocking post-tween.
 - Scene saved successfully.

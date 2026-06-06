@@ -51,6 +51,17 @@ public class PaddleController : MonoBehaviour
         _boxCollider = GetComponent<BoxCollider2D>();
     }
 
+    private void Start()
+    {
+        // Lock controls at startup until the game officially starts.
+        // GameManager's StartNewGame() will call ResetPaddleState() to re-enable this.
+        enabled = false;
+        if (moveInput != null && moveInput.action != null)
+        {
+            moveInput.action.Disable();
+        }
+    }
+
     private void OnEnable()
     {
         if (moveInput != null && moveInput.action != null)

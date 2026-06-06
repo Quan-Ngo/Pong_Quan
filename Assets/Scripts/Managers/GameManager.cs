@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PaddleController rightPaddle;
 
     [Header("Event Channels — Listen")]
+    [SerializeField] private VoidEventChannelSO startGameEvent;
     [SerializeField] private GoalScoredEventChannelSO goalScoredEvent;
     [SerializeField] private VoidEventChannelSO paddleRespawnedEvent;
 
@@ -30,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        if (startGameEvent != null)
+            startGameEvent.OnEventRaised += StartNewGame;
         if (goalScoredEvent != null)
             goalScoredEvent.OnEventRaised += OnGoalScored;
         if (gameOverEvent != null)
@@ -40,6 +43,8 @@ public class GameManager : MonoBehaviour
 
     private void OnDisable()
     {
+        if (startGameEvent != null)
+            startGameEvent.OnEventRaised -= StartNewGame;
         if (goalScoredEvent != null)
             goalScoredEvent.OnEventRaised -= OnGoalScored;
         if (gameOverEvent != null)
@@ -50,7 +55,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        StartNewGame();
+        // StartNewGame() is now called by the startGameEvent when the title screen pan completes.
     }
 
     /// <summary>

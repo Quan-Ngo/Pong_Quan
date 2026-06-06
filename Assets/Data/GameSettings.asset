@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: GameSettings
   m_EditorClassIdentifier: Assembly-CSharp::GameSettingsSO
   targetWinScore: 7
-  initialBallSpeed: 0.13
+  initialBallSpeed: 0.12
   maxBallSpeed: 15
   speedMultiplierPerHit: 1.1
   maxBounceAngle: 60
