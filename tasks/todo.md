@@ -1,3 +1,20 @@
+# Color Generation Refactoring
+
+- [x] Extract HSV color generation into `GenerateSpeedScaledColor` helper method in `GameVisualEffectsManager.cs`
+  - [x] Implement `GenerateSpeedScaledColor` helper method
+  - [x] Update `TriggerBackgroundFlash` to use the helper method
+  - [x] Update `SpawnShockwave` to use the helper method
+- [x] Verify compilation
+- [x] Update CHANGELOG.md
+
+# Visual Feedback Tweens Adjustment
+
+- [x] Modify color generation in `GameVisualEffectsManager.cs` to scale saturation with speed and keep brightness constant at 90%
+  - [x] Update `TriggerBackgroundFlash` to use HSV with S scaling and V = 0.9
+  - [x] Update `SpawnShockwave` to use HSV with S scaling and V = 0.9
+- [x] Verify the visual effects colors in Play Mode
+- [x] Update CHANGELOG.md
+
 # Visual Feedback Features Checklist
 
 - [x] Create `BallCollisionEventChannelSO.cs` script

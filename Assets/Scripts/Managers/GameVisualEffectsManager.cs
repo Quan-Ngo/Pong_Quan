@@ -22,11 +22,16 @@ public class GameVisualEffectsManager : MonoBehaviour
 
     [Header("Background Flash Settings")]
     [SerializeField] private float flashDuration = 0.3f;
+    [SerializeField] private float backGroundFlashBrightness = 0.1f;
 
     [Header("Shockwave Settings")]
     [SerializeField] private GameObject shockwavePrefab;
     [SerializeField] private float baseShockwaveDuration = 0.3f;
     [SerializeField] private float baseShockwaveEndScale = 2.5f;
+
+    [Header("Color Saturation Settings")]
+    [SerializeField] private float initialSaturationValue = 0.2f;
+    [SerializeField] private float speedScaleFactor = 0.8f;
 
     private Vector3 _cameraStartPos;
     private Quaternion _cameraStartRot;
@@ -103,12 +108,7 @@ public class GameVisualEffectsManager : MonoBehaviour
     {
         if (bgRenderer == null) return;
 
-        // Generate a random vibrant color
-        Color randomColor = Random.ColorHSV(0f, 1f, 0.5f, 1f, 0.5f, 1f);
-
-        // Scale color brightness based on speed. Minimum brightness 30% of base color, max 100%.
-        Color targetColor = randomColor * (0.3f + 0.7f * normalizedSpeed);
-        targetColor.a = 1f; // Ensure alpha is fully opaque for the background
+        Color targetColor = GenerateSpeedScaledColor(normalizedSpeed, backGroundFlashBrightness);
 
         _bgTween?.Kill();
         bgRenderer.color = targetColor;
@@ -125,15 +125,21 @@ public class GameVisualEffectsManager : MonoBehaviour
         ShockwaveRing shockwave = shockwaveObj.GetComponent<ShockwaveRing>();
         if (shockwave == null) return;
 
-        // Random vibrant color for shockwave
-        Color randomColor = Random.ColorHSV(0f, 1f, 0.6f, 1f, 0.6f, 1f);
-        Color shockwaveColor = randomColor * (0.5f + 0.5f * normalizedSpeed);
-        shockwaveColor.a = 1f; // Full opacity initially
+        Color shockwaveColor = GenerateSpeedScaledColor(normalizedSpeed);
 
         float duration = baseShockwaveDuration;
         float startScale = 0.1f;
         float endScale = baseShockwaveEndScale * (0.8f + 0.6f * normalizedSpeed);
 
         shockwave.Initialize(duration, startScale, endScale, shockwaveColor);
+    }
+
+    private Color GenerateSpeedScaledColor(float normalizedSpeed, float value = 0.9f)
+    {
+        float hue = Random.Range(0f, 1f);
+        float saturation = Mathf.Clamp01((initialSaturationValue + normalizedSpeed) * speedScaleFactor);
+        Color color = Color.HSVToRGB(hue, saturation, value);
+        color.a = 1f; // Ensure alpha is fully opaque
+        return color;
     }
 }

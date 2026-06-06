@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2026-06-06
+
+### Changed
+- **Visual Effects Color Extraction**: Extracted speed-scaled HSV color generation into a reusable `GenerateSpeedScaledColor` helper method inside `GameVisualEffectsManager.cs` to eliminate duplicate color generation logic.
+- **Visual Effects Saturation Scaling**: Refactored background flash and shockwave colors in `GameVisualEffectsManager.cs` to scale their saturation (S) with ball speed using the HSV color model, while maintaining a constant 90% brightness (V = 0.9f) by default to keep a vibrant, consistent aesthetic.
+- **Customizable Saturation Parameters**: Added configurable fields (`initialSaturationValue` and `speedScaleFactor`) to `GameVisualEffectsManager.cs` to scale saturation dynamically according to the formula: `(initialSaturationValue + normalizedSpeed) * speedScaleFactor`.
+- **Shockwave Ring Fade Curve**: Adjusted `ShockwaveRing.cs` to use `Ease.InQuad` so the vector ring stays solid for most of its duration and fades out rapidly at the end.
+- **Custom Background Flash Brightness**: Utilized the newly added `backGroundFlashBrightness` field in `GameVisualEffectsManager.cs` to set the brightness of the background flash, allowing independent control from other visual effect brightness values.
+
 ## [0.3.0] - 2026-06-06
 
 ### Added

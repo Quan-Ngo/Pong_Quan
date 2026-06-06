@@ -25,7 +25,7 @@ public class ShockwaveRing : MonoBehaviour
 
         // Animate fade out and destroy on completion
         _spriteRenderer.DOFade(0f, duration)
-            .SetEase(Ease.OutQuad)
+            .SetEase(Ease.InQuad)
             .OnComplete(() => Destroy(gameObject));
     }
 }

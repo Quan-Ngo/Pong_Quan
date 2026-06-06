@@ -230,7 +230,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -16.549452}
   m_SpriteTilingProperty:
     border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
     pivot: {x: 0.5, y: 0.5}
@@ -240,7 +240,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 34.098904}
   m_EdgeRadius: 0
 --- !u!4 &85660894
 Transform:
@@ -659,7 +659,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 15.176687}
   m_SpriteTilingProperty:
     border: {x: 0.049999997, y: 0.049999997, z: 0.049999997, w: 0.049999997}
     pivot: {x: 0.5, y: 0.5}
@@ -669,7 +669,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1, y: 31.353378}
   m_EdgeRadius: 0
 --- !u!4 &167585900
 Transform:
@@ -725,9 +725,12 @@ MonoBehaviour:
   shakeVibrato: 10
   shakeRandomness: 90
   flashDuration: 0.5
+  backGroundFlashBrightness: 0.3
   shockwavePrefab: {fileID: 3873277466059410536, guid: d1759eb057508754082201e90310ddd6, type: 3}
   baseShockwaveDuration: 0.5
   baseShockwaveEndScale: 1
+  initialSaturationValue: 0.3
+  speedScaleFactor: 1.6
 --- !u!4 &214896794
 Transform:
   m_ObjectHideFlags: 0
