@@ -14,6 +14,7 @@ public class BallCollisionHandler : MonoBehaviour
     [Header("Tags")]
     [SerializeField] private string wallTag = "Wall";
     [SerializeField] private string paddleTag = "Paddle";
+    [SerializeField] private string goalGuardTag = "GoalGuard";
 
     [Header("Events")]
     [SerializeField] private BallCollisionEventChannelSO onBallCollision;
@@ -29,14 +30,6 @@ public class BallCollisionHandler : MonoBehaviour
     {
         if (other.CompareTag(wallTag))
         {
-            // Check if this is a GoalGuard wall first.
-            GoalGuardWall guardWall = other.GetComponent<GoalGuardWall>();
-            if (guardWall != null)
-            {
-                // Treat as if the owner player hit the ball.
-                _ball.lastHitterIndex = guardWall.ownerPlayerIndex;
-            }
-
             HandleWallBounce();
             RaiseCollisionEvent(other);
         }
@@ -47,6 +40,18 @@ public class BallCollisionHandler : MonoBehaviour
             if (paddle != null)
             {
                 _ball.lastHitterIndex = paddle.playerIndex;
+            }
+
+            HandlePaddleBounce(other);
+            RaiseCollisionEvent(other);
+        }
+        else if (other.CompareTag(goalGuardTag))
+        {
+            // Treat as if the owner player hit the ball.
+            GoalGuardWall guardWall = other.GetComponent<GoalGuardWall>();
+            if (guardWall != null)
+            {
+                _ball.lastHitterIndex = guardWall.ownerPlayerIndex;
             }
 
             HandlePaddleBounce(other);
