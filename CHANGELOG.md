@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- Added DOTween hue-cycling animation to the Player Win text on the Game Over panel.
 - Title Screen UI with a play button and interactive panning animation.
 - Camera and gameplay UI panning (tweening camera Y from -15 to 0, and ScoreDisplay from Y = 300 to 0) over 1.5 seconds.
 - Lock paddles, timers, and ball serving mechanics until the panning transition completes, signaled by the `StartGameEventChannel`.

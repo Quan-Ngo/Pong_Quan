@@ -1,4 +1,19 @@
+# GameOver Panel WinnerText Hue Cycle Feature
+
+- [x] Modify `GameOverPanel.cs` for WinnerText Hue Cycle Tween
+  - [x] Add imports for `TMPro`
+  - [x] Add serialized fields for `winnerText` (TextMeshProUGUI), `hueDuration` (float), `saturation` (float), and `brightness` (float)
+  - [x] Implement `OnEnable` logic to start an infinite DOTween tween cycling `winnerText.color` hue using `Color.HSVToRGB`
+  - [x] Implement `OnDisable` and `OnDestroy` logic to kill the hue cycle tween
+- [x] Connect Scene References in `PongScene`
+  - [x] Reference the `WinnerText` GameObject in the `GameOverPanel` component on the `GameOverPanel` GameObject
+- [x] Verify functionality and correctness
+  - [x] Verify script compilation without errors
+  - [x] Write/run validation script to verify the script compiles, is attached, and the WinnerText reference is bound
+- [x] Update CHANGELOG.md and related documentation
+
 # Powerup Visual Feedback Features
+
 
 - [ ] Modify `PaddleController.cs` for Tweened Paddle Length
   - [ ] Implement Y-scale multiplier transitions using DOTween (0.3s duration, OutBack/InQuad eases)

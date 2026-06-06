@@ -2982,6 +2982,10 @@ MonoBehaviour:
   startOffsetY: 800
   duration: 0.8
   easeType: 27
+  winnerText: {fileID: 648262586}
+  hueDuration: 2
+  saturation: 0.8
+  brightness: 1
 --- !u!1 &1271285350
 GameObject:
   m_ObjectHideFlags: 0
