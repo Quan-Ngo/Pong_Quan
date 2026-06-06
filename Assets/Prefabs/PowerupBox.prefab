@@ -110,6 +110,7 @@ MonoBehaviour:
   upperBound: 4
   lowerBound: -4
   ballTag: Ball
+  explosionVfxPrefab: {fileID: 7577115183539539928, guid: d87e6bc206f2d484e80c304a637bc6cd, type: 3}
 --- !u!58 &6989290234170330053
 CircleCollider2D:
   m_ObjectHideFlags: 0

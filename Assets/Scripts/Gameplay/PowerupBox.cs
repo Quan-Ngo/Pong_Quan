@@ -52,6 +52,9 @@ public class PowerupBox : MonoBehaviour
         }
     }
 
+    [Header("Visuals")]
+    [SerializeField] private GameObject explosionVfxPrefab;
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag(ballTag)) return;
@@ -70,6 +73,11 @@ public class PowerupBox : MonoBehaviour
         if (powerupCollectedEvent != null)
         {
             powerupCollectedEvent.RaiseEvent(collectingPlayer, selectedType);
+        }
+
+        if (explosionVfxPrefab != null)
+        {
+            Instantiate(explosionVfxPrefab, transform.position, Quaternion.identity);
         }
 
         Destroy(gameObject);

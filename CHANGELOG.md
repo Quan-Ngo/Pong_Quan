@@ -11,6 +11,7 @@
 - Added DOTween animations for Goal Guards (sliding into place) and Slow Zones (alpha fading).
 - Introduced `PaddlePowerupVisuals` to decouple particle system management from `PaddleController`.
 - Extracted procedurally generated powerup particle systems into standard Unity prefabs (`SpeedBoostVfx` and `FastBallAuraVfx`) for easier artist iteration and performance.
+- Added a particle explosion effect (`PowerupExplosionVfx`) that triggers when the ball hits the powerup box.
 ### Fixed
 - Paddles no longer respawn if they are destroyed on a game-winning point.
 - Paddles are now properly restored to their original state and position upon restarting a match from the Game Over screen.
