@@ -1,4 +1,5 @@
 using UnityEngine;
+using DG.Tweening;
 
 /// <summary>
 /// A powerup box that floats vertically at the center of the screen.
@@ -19,16 +20,32 @@ public class PowerupBox : MonoBehaviour
     [Tooltip("Minimum Y position the box can reach.")]
     [SerializeField] private float lowerBound = -4f;
 
+    [Header("Spawn Tween")]
+    [SerializeField] private float spawnTweenDuration = 0.5f;
+
     [Header("Tags")]
     [SerializeField] private string ballTag = "Ball";
 
     /// <summary>Current vertical movement direction (+1 or -1).</summary>
     private int _direction = 1;
 
+    private Vector3 _originalScale;
+
+    private void Awake()
+    {
+        _originalScale = transform.localScale;
+        transform.localScale = Vector3.zero;
+    }
+
     private void Start()
     {
         // Randomize starting direction.
         _direction = Random.Range(0, 2) == 0 ? 1 : -1;
+
+        // Animate spawn.
+        transform.DOScale(_originalScale, spawnTweenDuration)
+            .SetEase(Ease.OutBack)
+            .SetLink(gameObject);
     }
 
     private void FixedUpdate()
