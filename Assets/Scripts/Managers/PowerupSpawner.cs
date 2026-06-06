@@ -17,6 +17,7 @@ public class PowerupSpawner : MonoBehaviour
     [Header("Events — Listen")]
     [SerializeField] private VoidEventChannelSO onBallServed;
     [SerializeField] private VoidEventChannelSO onRoundReset;
+    [SerializeField] private VoidEventChannelSO gameOverEvent;
 
     /// <summary>Tracks all active powerup boxes so we can destroy them on round reset.</summary>
     private readonly List<GameObject> _activeBoxes = new List<GameObject>();
@@ -28,6 +29,8 @@ public class PowerupSpawner : MonoBehaviour
             onBallServed.OnEventRaised += StartSpawning;
         if (onRoundReset != null)
             onRoundReset.OnEventRaised += StopAndClear;
+        if (gameOverEvent != null)
+            gameOverEvent.OnEventRaised += StopAndClear;
     }
 
     private void OnDisable()
@@ -36,6 +39,8 @@ public class PowerupSpawner : MonoBehaviour
             onBallServed.OnEventRaised -= StartSpawning;
         if (onRoundReset != null)
             onRoundReset.OnEventRaised -= StopAndClear;
+        if (gameOverEvent != null)
+            gameOverEvent.OnEventRaised -= StopAndClear;
     }
 
     private void StartSpawning()

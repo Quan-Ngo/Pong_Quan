@@ -12,3 +12,8 @@
   1. Declare prefabs as `GameObject` fields in serializable fields when they represent full prefab assets.
   2. Instantiate the `GameObject` using `Instantiate(prefab)`, then retrieve component scripts via `GetComponent<T>()`.
   3. After changing serialized field types, programmatically or manually re-verify and save all scene references to prevent missing reference errors.
+
+## 3. Event Handling and Local State Overwrites
+- **Correction**: The user pointed out the paddle was still respawning despite the game being over, because the game over flag was being inadvertently cleared.
+- **Context**: When responding to a goal being scored, the paddle immediately set `_isGameOver = false` within its `ExplodeAndRespawnRoutine` coroutine. Because event channel execution order can be arbitrary (e.g., `GameManager` might raise the `gameOverEvent` before or after `PaddleController` has started its respawn routine), hardcoding local state resets inside an event response can override global state updates.
+- **Rule**: Never arbitrarily reset global state flags (like `_isGameOver`) inside specific event handlers (like taking damage or scoring) unless the intent is specifically to override. State resets should only occur during explicit state-change methods (e.g., `ResetPaddleState` or `StartNewGame`).

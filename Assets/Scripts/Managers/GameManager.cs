@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
 
     [Header("References")]
     [SerializeField] private BallController ball;
+    [SerializeField] private PaddleController leftPaddle;
+    [SerializeField] private PaddleController rightPaddle;
 
     [Header("Event Channels — Listen")]
     [SerializeField] private GoalScoredEventChannelSO goalScoredEvent;
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour
 
     private int[] _scores = new int[2];
     private bool _gameOver;
+    private Coroutine _serveCoroutine;
 
     private void OnEnable()
     {
@@ -62,9 +65,17 @@ public class GameManager : MonoBehaviour
         scoreEvent.RaiseEvent(0, 0);
         scoreEvent.RaiseEvent(1, 0);
 
+        if (leftPaddle != null) leftPaddle.ResetPaddleState();
+        if (rightPaddle != null) rightPaddle.ResetPaddleState();
+
+        if (_serveCoroutine != null)
+        {
+            StopCoroutine(_serveCoroutine);
+        }
+
         // First serve goes to the right (towards Player 2) by default.
         ball.SetServeDirection(Random.Range(-1, 1));
-        StartCoroutine(ServeAfterDelay());
+        _serveCoroutine = StartCoroutine(ServeAfterDelay());
     }
 
     private void OnGoalScored(int losingPlayerIndex, Vector3 ballPosition)
@@ -101,7 +112,11 @@ public class GameManager : MonoBehaviour
     {
         if (!_gameOver)
         {
-            StartCoroutine(ServeAfterDelay());
+            if (_serveCoroutine != null)
+            {
+                StopCoroutine(_serveCoroutine);
+            }
+            _serveCoroutine = StartCoroutine(ServeAfterDelay());
         }
     }
 
@@ -112,11 +127,17 @@ public class GameManager : MonoBehaviour
         {
             ball.Serve();
         }
+        _serveCoroutine = null;
     }
 
     private void OnGameOver()
     {
         _gameOver = true;
+        if (_serveCoroutine != null)
+        {
+            StopCoroutine(_serveCoroutine);
+            _serveCoroutine = null;
+        }
     }
 
     /// <summary>

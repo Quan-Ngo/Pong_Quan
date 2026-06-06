@@ -290,6 +290,7 @@ MonoBehaviour:
   powerupBoxPrefab: {fileID: 7774645388578902273, guid: 9088c969318a4bd40a1c83002d00104c, type: 3}
   onBallServed: {fileID: 11400000, guid: c16ea793d5bb5734680d113a8f1d6354, type: 2}
   onRoundReset: {fileID: 11400000, guid: 90d8ceaf16c58154e870fe60c0e88508, type: 2}
+  gameOverEvent: {fileID: 11400000, guid: 15eedf25d2bc69244a37c5db383aa315, type: 2}
 --- !u!4 &102301933
 Transform:
   m_ObjectHideFlags: 0
@@ -791,6 +792,7 @@ MonoBehaviour:
   moveInput: {fileID: 1257562677}
   goalScoredEvent: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
   paddleRespawnedEvent: {fileID: 11400000, guid: 062027b83109dfc4a9e792578bba2ca4, type: 2}
+  gameOverEvent: {fileID: 11400000, guid: 15eedf25d2bc69244a37c5db383aa315, type: 2}
   respawnDelay: 1
   respawnDuration: 0.5
   upperBound: 4
@@ -2644,6 +2646,7 @@ MonoBehaviour:
   moveInput: {fileID: 1996054055}
   goalScoredEvent: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
   paddleRespawnedEvent: {fileID: 11400000, guid: 062027b83109dfc4a9e792578bba2ca4, type: 2}
+  gameOverEvent: {fileID: 11400000, guid: 15eedf25d2bc69244a37c5db383aa315, type: 2}
   respawnDelay: 1
   respawnDuration: 0.5
   upperBound: 4
@@ -3273,6 +3276,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   gameSettings: {fileID: 11400000, guid: fb0066d67dc5ecb41aa026fcf65cae60, type: 2}
   ball: {fileID: 1672213327}
+  leftPaddle: {fileID: 380080891}
+  rightPaddle: {fileID: 1271392918}
   goalScoredEvent: {fileID: 11400000, guid: 42246abfd561d2748a6f0688c2206723, type: 2}
   paddleRespawnedEvent: {fileID: 11400000, guid: 062027b83109dfc4a9e792578bba2ca4, type: 2}
   scoreEvent: {fileID: 11400000, guid: 5dd27a1be2fa42a4c842114fde68379c, type: 2}

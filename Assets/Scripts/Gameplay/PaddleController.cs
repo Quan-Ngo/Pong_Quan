@@ -24,6 +24,7 @@ public class PaddleController : MonoBehaviour
     [Header("Events")]
     [SerializeField] private GoalScoredEventChannelSO goalScoredEvent;
     [SerializeField] private VoidEventChannelSO paddleRespawnedEvent;
+    [SerializeField] private VoidEventChannelSO gameOverEvent;
 
     [Header("Respawn")]
     [SerializeField] private float respawnDelay = 1.0f;
@@ -38,6 +39,7 @@ public class PaddleController : MonoBehaviour
     private float _moveDirection;
     private float _speedMultiplier = 1f;
     private Vector3 _originalScale;
+    private bool _isGameOver;
 
     private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _boxCollider;
@@ -59,6 +61,10 @@ public class PaddleController : MonoBehaviour
         {
             goalScoredEvent.OnEventRaised += OnGoalScored;
         }
+        if (gameOverEvent != null)
+        {
+            gameOverEvent.OnEventRaised += OnGameOver;
+        }
     }
 
     private void OnDisable()
@@ -71,6 +77,15 @@ public class PaddleController : MonoBehaviour
         {
             goalScoredEvent.OnEventRaised -= OnGoalScored;
         }
+        if (gameOverEvent != null)
+        {
+            gameOverEvent.OnEventRaised -= OnGameOver;
+        }
+    }
+
+    private void OnGameOver()
+    {
+        _isGameOver = true;
     }
 
     private void OnGoalScored(int losingPlayerIndex, Vector3 ballPosition)
@@ -97,6 +112,11 @@ public class PaddleController : MonoBehaviour
 
         // 3. Wait for delay
         yield return new WaitForSeconds(respawnDelay);
+
+        if (_isGameOver)
+        {
+            yield break;
+        }
 
         // 4. Reset position Y to 0, start scale from 0
         Vector3 pos = transform.position;
@@ -158,6 +178,34 @@ public class PaddleController : MonoBehaviour
     }
 
     // ─────────────────────── External Modifiers ───────────────────────
+
+    /// <summary>
+    /// Instantly resets the paddle to its active, default state.
+    /// Used when starting/restarting the game.
+    /// </summary>
+    public void ResetPaddleState()
+    {
+        // Stop any running respawn coroutines
+        StopAllCoroutines();
+
+        _isGameOver = false;
+
+        // Reset scale and position
+        transform.localScale = _originalScale;
+        Vector3 pos = transform.position;
+        pos.y = 0f;
+        transform.position = pos;
+
+        // Enable components
+        if (_spriteRenderer != null) _spriteRenderer.enabled = true;
+        if (_boxCollider != null) _boxCollider.enabled = true;
+
+        enabled = true;
+        if (moveInput != null && moveInput.action != null)
+        {
+            moveInput.action.Enable();
+        }
+    }
 
     /// <summary>
     /// Set the speed multiplier. 1f = normal speed. Called by external systems.
